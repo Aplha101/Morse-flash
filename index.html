@@ -1,98 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Morse Code Receiver</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    video {
-      width: 100%;
-      height: auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Code Flashlight</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
 </head>
 <body>
-  <div class="card">
-    <h1>Morse Code Receiver</h1>
-    <video id="video" autoplay></video>
-    <p id="output">Waiting for Morse Code...</p>
-  </div>
-
-  <script>
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } } // Use the back camera
-        });
-        const videoElement = document.getElementById('video');
-        videoElement.srcObject = stream;
-
-        // Add brightness detection logic here (for decoding Morse code)
-        detectBrightness(stream);
-      } catch (error) {
-        console.error("Error accessing camera:", error);
-        document.getElementById('output').textContent = "Unable to access the camera.";
-      }
-    }
-
-    function detectBrightness(stream) {
-      // Set up a canvas for brightness detection
-      const video = document.getElementById('video');
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      const output = document.getElementById('output');
-
-      setInterval(() => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Analyze brightness by sampling pixel data
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = imageData.data;
-        let brightnessSum = 0;
-
-        for (let i = 0; i < pixels.length; i += 4) {
-          // Calculate brightness from RGB values
-          const r = pixels[i];
-          const g = pixels[i + 1];
-          const b = pixels[i + 2];
-          const brightness = (r + g + b) / 3;
-          brightnessSum += brightness;
-        }
-
-        const avgBrightness = brightnessSum / (pixels.length / 4);
-
-        // Check if brightness exceeds a certain threshold
-        if (avgBrightness > 150) {
-          output.textContent = "Light detected (Dot or Dash)";
-        } else {
-          output.textContent = "No light detected";
-        }
-      }, 100);
-    }
-
-    // Start the camera on page load
-    startCamera();
-  </script>
+    <div class="card">
+        <h2> Morse Flash</h2>
+        <input type="text" id="textInput" placeholder="Enter English Text">
+        <button class="convert">Convert to Morse</button>
+        <input type="text" id="morseInput" placeholder="Enter Morse Code (e.g., . _ .)">
+        <button class="flash">Flash Morse Code</button>
+        <button class="loop-toggle">Loop: OFF</button>
+        <button class="receive" onclick="window.location.href='receive.html'">Receive</button>
+        <p>Use <strong>"."</strong> for short and <strong>"_"</strong> for long signals.</p>
+    </div>
+    
+   
 </body>
+
+<script src="main.js"></script>
 </html>

@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receive Morse Code</title>
-    <style>
-        body { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #121212; color: white; text-align: center; }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); width: 90%; max-width: 400px; }
-        h2 { margin-bottom: 10px; color: #ffcc00; }
-        video { width: 100%; border-radius: 10px; margin-top: 10px; }
-        p { font-size: 18px; margin-top: 15px; color: #bbbbbb; }
-        .back { margin-top: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #ff5733; color: black; font-size: 16px; cursor: pointer; transition: 0.3s; width: 100%; }
-        .back:hover { background-color: #e64d2e; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morse Code Receiver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    video {
+      width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <h2>📷 Receiving Morse Code</h2>
-        <video id="video" autoplay></video>
-        <p>Detected Morse Code: <span id="morseOutput">...</span></p>
-        <p>Translated Text: <span id="textOutput">...</span></p>
-        <button class="back" onclick="window.location.href='index.html'">Back</button>
-    </div>
-
-    <script src="receive.js">receive.js</script>
+  <div class="card">
+    <h1>Morse Code Receiver</h1>
+    <video id="video" autoplay></video>
+    <p id="output">Waiting for Morse Code...</p>
+  </div>
+<script src="receive.js">receive.js</script>
 </body>
 </html>
