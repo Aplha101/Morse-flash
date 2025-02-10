@@ -1,41 +1,23 @@
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Morse Code Receiver</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    video {
-      width: 100%;
-      height: auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-  </style>
+  <link rel="stylesheet" href="receive.css" type="text/css" media="all" />
 </head>
 <body>
   <div class="card">
     <h1>Morse Code Receiver</h1>
     <video id="video" autoplay></video>
     <p id="output">Waiting for Morse Code...</p>
+    <!-- Display decoded Morse code -->
+    <p id="morseOutput">Morse Code: </p>
+    <!-- Display translated English text -->
+    <p id="textOutput">English Translation: </p>
   </div>
-<script src="receive.js">receive.js</script>
+  <!-- Corrected script tag -->
+  <script src="receive.js"></script>
 </body>
 </html>
