@@ -1,119 +1,55 @@
-const video = document.getElementById('video');
-const morseOutput = document.getElementById('morseOutput');
-const textOutput = document.getElementById('textOutput');
-
-const MORSE_TO_TEXT = {
-  '._': 'A',
-  '_...': 'B',
-  '_._.': 'C',
-  '_..': 'D',
-  '.': 'E',
-  '.._.': 'F',
-  '__.': 'G',
-  '....': 'H',
-  '..': 'I',
-  '.___': 'J',
-  '_._': 'K',
-  '._..': 'L',
-  '__': 'M',
-  '_.': 'N',
-  '___': 'O',
-  '.__.': 'P',
-  '__._': 'Q',
-  '._.': 'R',
-  '...': 'S',
-  '_': 'T',
-  '.._': 'U',
-  '..._': 'V',
-  '.__': 'W',
-  '_.._': 'X',
-  '_.__': 'Y',
-  '__..': 'Z',
-  '_____': '0',
-  '.____': '1',
-  '..___': '2',
-  '...__': '3',
-  '...._': '4',
-  '.....': '5',
-  '_....': '6',
-  '__...': '7',
-  '___..': '8',
-  '____.': '9'
-};
-
-let isBright = false;
-let lastTime = null;
-let morseCode = '';
-
-function decodeMorse(morse) {
-  return morse.split(' ').map(code => MORSE_TO_TEXT[code] || '').join('');
-}
-
 async function startCamera() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: "environment" } } // Use the back camera
+    });
+    const videoElement = document.getElementById('video');
+    videoElement.srcObject = stream;
 
-    const track = stream.getVideoTracks()[0];
-    const imageCapture = new ImageCapture(track);
-    analyzeLight(imageCapture);
-  } catch (err) {
-    console.error("Error accessing camera:", err);
+    // Add brightness detection logic here (for decoding Morse code)
+    detectBrightness(stream);
+  } catch (error) {
+    console.error("Error accessing camera:", error);
+    document.getElementById('output').textContent = "Unable to access the camera.";
   }
 }
 
-async function analyzeLight(imageCapture) {
-  while (true) {
-    try {
-      const bitmap = await imageCapture.grabFrame();
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+function detectBrightness(stream) {
+  // Set up a canvas for brightness detection
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  const output = document.getElementById('output');
 
-      canvas.width = bitmap.width;
-      canvas.height = bitmap.height;
-      ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
+  setInterval(() => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      let brightness = calculateBrightness(ctx, bitmap.width, bitmap.height);
+    // Analyze brightness by sampling pixel data
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    let brightnessSum = 0;
 
-      let now = Date.now();
-      if (brightness > 100) {
-        if (!isBright) {
-          let duration = lastTime ? now - lastTime : 200;
-          morseCode += duration < 400 ? '.' : '_';
-          lastTime = now;
-        }
-        isBright = true;
-      } else {
-        if (isBright) {
-          morseCode += ' ';
-          lastTime = now;
-        }
-        isBright = false;
-      }
-
-      morseOutput.innerText = morseCode.trim();
-      textOutput.innerText = decodeMorse(morseCode.trim());
-
-      await new Promise(res => setTimeout(res, 100));
-    } catch (err) {
-      console.error("Error processing frame:", err);
+    for (let i = 0; i < pixels.length; i += 4) {
+      // Calculate brightness from RGB values
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      const brightness = (r + g + b) / 3;
+      brightnessSum += brightness;
     }
-  }
+
+    const avgBrightness = brightnessSum / (pixels.length / 4);
+
+    // Check if brightness exceeds a certain threshold
+    if (avgBrightness > 150) {
+      output.textContent = "Light detected (Dot or Dash)";
+    } else {
+      output.textContent = "No light detected";
+    }
+  }, 100);
 }
 
-function calculateBrightness(ctx, width, height) {
-  let imageData = ctx.getImageData(0, 0, width, height);
-  let pixels = imageData.data;
-  let sum = 0;
-
-  for (let i = 0; i < pixels.length; i += 4) {
-    sum += pixels[i] + pixels[i + 1] + pixels[i + 2];
-  }
-
-  return sum / (pixels.length / 4);
-}
-
-
-
-
+// Start the camera on page load
 startCamera();
